@@ -6,7 +6,7 @@ namespace Wiki_Prototype
         {
             InitializeComponent();
         }
-        static int rowSize = 12, item = 0;
+        static int rowSize = 15, item = 0;
         static int coloumSize = 4;
         int name = 0, category = 1, structure = 2, definition = 3;        
         string[,] wikiArray = new string[rowSize,coloumSize];
@@ -51,7 +51,7 @@ namespace Wiki_Prototype
                 {
                     while (!reader.EndOfStream)
                     {
-                        wikiArray.Add(reader.ReadLine());
+                        wikiArray.push(reader.ReadLine());
                     }
                 }
                 Display();
@@ -60,12 +60,7 @@ namespace Wiki_Prototype
             {
                 MessageBox.Show("File counld not be openned");
             }
-        }
-
-        private void listBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
+        }      
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
@@ -99,7 +94,10 @@ namespace Wiki_Prototype
                 MessageBox.Show("File NOT saved");
             }
         }
+  private void listBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
+        }
 
         #endregion
 
