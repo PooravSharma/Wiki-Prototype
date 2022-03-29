@@ -19,11 +19,12 @@ namespace Wiki_Prototype
 
                 wikiArray[item, name] = textBoxName.Text;
                 wikiArray[item,category] = textBoxCategory.Text;
+                wikiArray[item,structure] = textBoxCategory.Text;
+                wikiArray[item,definition] = textBoxCategory.Text;
                 item++;
-
                 Display();
                 Clear();
-                item++;
+         
             }
             else
             {
@@ -45,7 +46,7 @@ namespace Wiki_Prototype
             currentFileName = fileName;
             try
             {
-                Clear();
+                Array.Clear(wikiArray);
                 using (StreamReader reader = new StreamReader(File.OpenRead(fileName)))
                 {
                     while (!reader.EndOfStream)
