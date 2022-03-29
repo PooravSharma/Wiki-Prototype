@@ -28,30 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonOpen = new System.Windows.Forms.Button();
+            this.buttonLoad = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.buttonSearch = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonEdit = new System.Windows.Forms.Button();
             this.buttonSort = new System.Windows.Forms.Button();
             this.buttonAutofill = new System.Windows.Forms.Button();
             this.buttonDelete = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.textBoxSearch = new System.Windows.Forms.TextBox();
+            this.textBoxName = new System.Windows.Forms.TextBox();
+            this.textBoxCategory = new System.Windows.Forms.TextBox();
+            this.textBoxStructure = new System.Windows.Forms.TextBox();
+            this.textBoxDefinition = new System.Windows.Forms.TextBox();
+            this.listBox = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
-            // buttonOpen
+            // buttonLoad
             // 
-            this.buttonOpen.Location = new System.Drawing.Point(21, 25);
-            this.buttonOpen.Name = "buttonOpen";
-            this.buttonOpen.Size = new System.Drawing.Size(75, 23);
-            this.buttonOpen.TabIndex = 0;
-            this.buttonOpen.Text = "Open";
-            this.buttonOpen.UseVisualStyleBackColor = true;
+            this.buttonLoad.Location = new System.Drawing.Point(21, 25);
+            this.buttonLoad.Name = "buttonLoad";
+            this.buttonLoad.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoad.TabIndex = 0;
+            this.buttonLoad.Text = "Load";
+            this.buttonLoad.UseVisualStyleBackColor = true;
+            this.buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
             // 
             // buttonSave
             // 
@@ -61,15 +62,16 @@
             this.buttonSave.TabIndex = 0;
             this.buttonSave.Text = "Save";
             this.buttonSave.UseVisualStyleBackColor = true;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
-            // button3
+            // buttonSearch
             // 
-            this.button3.Location = new System.Drawing.Point(437, 26);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 0;
-            this.button3.Text = "button1";
-            this.button3.UseVisualStyleBackColor = true;
+            this.buttonSearch.Location = new System.Drawing.Point(437, 26);
+            this.buttonSearch.Name = "buttonSearch";
+            this.buttonSearch.Size = new System.Drawing.Size(75, 23);
+            this.buttonSearch.TabIndex = 0;
+            this.buttonSearch.Text = "Search";
+            this.buttonSearch.UseVisualStyleBackColor = true;
             // 
             // buttonAdd
             // 
@@ -79,6 +81,7 @@
             this.buttonAdd.TabIndex = 0;
             this.buttonAdd.Text = "Add";
             this.buttonAdd.UseVisualStyleBackColor = true;
+            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
             // 
             // buttonEdit
             // 
@@ -116,70 +119,76 @@
             this.buttonDelete.Text = "Delete";
             this.buttonDelete.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // textBoxSearch
             // 
-            this.textBox1.Location = new System.Drawing.Point(238, 26);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(183, 23);
-            this.textBox1.TabIndex = 1;
+            this.textBoxSearch.Location = new System.Drawing.Point(238, 26);
+            this.textBoxSearch.Name = "textBoxSearch";
+            this.textBoxSearch.Size = new System.Drawing.Size(183, 23);
+            this.textBoxSearch.TabIndex = 1;
             // 
-            // textBox2
+            // textBoxName
             // 
-            this.textBox2.Location = new System.Drawing.Point(12, 70);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(205, 23);
-            this.textBox2.TabIndex = 1;
+            this.textBoxName.Location = new System.Drawing.Point(12, 70);
+            this.textBoxName.Name = "textBoxName";
+            this.textBoxName.Size = new System.Drawing.Size(205, 23);
+            this.textBoxName.TabIndex = 1;
+            this.textBoxName.Text = "Name";
             // 
-            // textBox3
+            // textBoxCategory
             // 
-            this.textBox3.Location = new System.Drawing.Point(12, 104);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(205, 23);
-            this.textBox3.TabIndex = 1;
+            this.textBoxCategory.Location = new System.Drawing.Point(12, 104);
+            this.textBoxCategory.Name = "textBoxCategory";
+            this.textBoxCategory.Size = new System.Drawing.Size(205, 23);
+            this.textBoxCategory.TabIndex = 1;
+            this.textBoxCategory.Text = "Category";
             // 
-            // textBox4
+            // textBoxStructure
             // 
-            this.textBox4.Location = new System.Drawing.Point(12, 139);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(205, 23);
-            this.textBox4.TabIndex = 1;
+            this.textBoxStructure.Location = new System.Drawing.Point(12, 139);
+            this.textBoxStructure.Name = "textBoxStructure";
+            this.textBoxStructure.Size = new System.Drawing.Size(205, 23);
+            this.textBoxStructure.TabIndex = 1;
+            this.textBoxStructure.Text = "Structure";
             // 
-            // textBox5
+            // textBoxDefinition
             // 
-            this.textBox5.Location = new System.Drawing.Point(12, 173);
-            this.textBox5.Multiline = true;
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(205, 169);
-            this.textBox5.TabIndex = 1;
+            this.textBoxDefinition.Location = new System.Drawing.Point(12, 173);
+            this.textBoxDefinition.Multiline = true;
+            this.textBoxDefinition.Name = "textBoxDefinition";
+            this.textBoxDefinition.Size = new System.Drawing.Size(205, 169);
+            this.textBoxDefinition.TabIndex = 1;
+            this.textBoxDefinition.Text = "Definition";
             // 
-            // listBox1
+            // listBox
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 15;
-            this.listBox1.Location = new System.Drawing.Point(238, 70);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(285, 169);
-            this.listBox1.TabIndex = 2;
+            this.listBox.AccessibleName = "";
+            this.listBox.FormattingEnabled = true;
+            this.listBox.ItemHeight = 15;
+            this.listBox.Location = new System.Drawing.Point(238, 70);
+            this.listBox.Name = "listBox";
+            this.listBox.Size = new System.Drawing.Size(285, 169);
+            this.listBox.TabIndex = 2;
+            this.listBox.SelectedIndexChanged += new System.EventHandler(this.listBox_SelectedIndexChanged);
             // 
             // Wiki_Prototype
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(542, 350);
-            this.Controls.Add(this.listBox1);
-            this.Controls.Add(this.textBox5);
-            this.Controls.Add(this.textBox4);
-            this.Controls.Add(this.textBox3);
-            this.Controls.Add(this.textBox2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.listBox);
+            this.Controls.Add(this.textBoxDefinition);
+            this.Controls.Add(this.textBoxStructure);
+            this.Controls.Add(this.textBoxCategory);
+            this.Controls.Add(this.textBoxName);
+            this.Controls.Add(this.textBoxSearch);
             this.Controls.Add(this.buttonAutofill);
             this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.buttonEdit);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.buttonSearch);
             this.Controls.Add(this.buttonSort);
             this.Controls.Add(this.buttonAdd);
             this.Controls.Add(this.buttonSave);
-            this.Controls.Add(this.buttonOpen);
+            this.Controls.Add(this.buttonLoad);
             this.Name = "Wiki_Prototype";
             this.Text = "Wiki_Prototype";
             this.ResumeLayout(false);
@@ -189,19 +198,19 @@
 
         #endregion
 
-        private Button buttonOpen;
+        private Button buttonLoad;
         private Button buttonSave;
-        private Button button3;
+        private Button buttonSearch;
         private Button buttonAdd;
         private Button buttonEdit;
         private Button buttonSort;
         private Button buttonAutofill;
         private Button buttonDelete;
-        private TextBox textBox1;
-        private TextBox textBox2;
-        private TextBox textBox3;
-        private TextBox textBox4;
-        private TextBox textBox5;
-        private ListBox listBox1;
+        private TextBox textBoxSearch;
+        private TextBox textBoxName;
+        private TextBox textBoxCategory;
+        private TextBox textBoxStructure;
+        private TextBox textBoxDefinition;
+        private ListBox listBox;
     }
 }
