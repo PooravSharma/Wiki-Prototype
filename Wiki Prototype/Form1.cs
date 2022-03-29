@@ -1,8 +1,8 @@
 namespace Wiki_Prototype
 {
-    public partial class Form1 : Form
+    public partial class Wiki_Prototype : Form
     {
-        public Form1()
+        public Wiki_Prototype()
         {
             InitializeComponent();
         }
