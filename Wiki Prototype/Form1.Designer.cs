@@ -109,6 +109,7 @@
             this.buttonAutofill.TabIndex = 0;
             this.buttonAutofill.Text = "Autofill";
             this.buttonAutofill.UseVisualStyleBackColor = true;
+            this.buttonAutofill.Click += new System.EventHandler(this.buttonAutofill_Click);
             // 
             // buttonDelete
             // 
@@ -118,6 +119,7 @@
             this.buttonDelete.TabIndex = 0;
             this.buttonDelete.Text = "Delete";
             this.buttonDelete.UseVisualStyleBackColor = true;
+            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
             // 
             // textBoxSearch
             // 
