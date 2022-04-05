@@ -19,7 +19,7 @@ namespace Wiki_Prototype
         {
            
             if (!string.IsNullOrEmpty(textBoxName.Text) && !string.IsNullOrEmpty(textBoxCategory.Text) && !string.IsNullOrEmpty(textBoxStructure.Text) && !string.IsNullOrEmpty(textBoxDefinition.Text))
-            { Focus();
+            { ;
 
                 wikiArray[item, name] = textBoxName.Text;
                 wikiArray[item, category] = textBoxCategory.Text;
