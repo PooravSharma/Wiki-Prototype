@@ -12,22 +12,15 @@ namespace Wiki_Prototype
         static int coloumSize = 4;
         int name = 0, category = 1, structure = 2, definition = 3;
         string[,] wikiArray = new string[rowSize, coloumSize];
-        string currentFileName = "definition_00.txt";
-        
+        string currentFileName = "definition_00.bin";
+
         #region Buttons
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-           
-            if (!string.IsNullOrEmpty(textBoxName.Text) && !string.IsNullOrEmpty(textBoxCategory.Text) && !string.IsNullOrEmpty(textBoxStructure.Text) && !string.IsNullOrEmpty(textBoxDefinition.Text))
-            { ;
 
-                wikiArray[item, name] = textBoxName.Text;
-                wikiArray[item, category] = textBoxCategory.Text;
-                wikiArray[item, structure] = textBoxCategory.Text;
-                wikiArray[item, definition] = textBoxCategory.Text;
-                item++;
-                Display();
-                Clear();
+            if (!string.IsNullOrEmpty(textBoxName.Text) && !string.IsNullOrEmpty(textBoxCategory.Text) && !string.IsNullOrEmpty(textBoxStructure.Text) && !string.IsNullOrEmpty(textBoxDefinition.Text))
+            {
+                Add(textBoxName.Text, textBoxCategory.Text, textBoxStructure.Text, textBoxDefinition.Text);
             }
             else
             {
@@ -37,10 +30,10 @@ namespace Wiki_Prototype
 
         private void buttonLoad_Click(object sender, EventArgs e)
         {
-            string fileName = "definition_01.txt";
+            string fileName = "definition_01.bin";
             OpenFileDialog OpenText = new OpenFileDialog();
             DialogResult sr = OpenText.ShowDialog();
-            OpenText.Filter = "Text Files | *.txt";
+            OpenText.Filter = "Binary Files | *.bin";
             OpenText.DefaultExt = "txt";
             if (sr == DialogResult.OK)
             {
@@ -52,12 +45,14 @@ namespace Wiki_Prototype
                 using (Stream stream = File.Open(fileName, FileMode.Open))
                 {
                     BinaryFormatter bin = new BinaryFormatter();
-                    for (int y = 0; y < coloumSize; y++)
+                    for (int i = 0; i < 12; i++)
                     {
-                        for (int x = 0; x < rowSize; x++)
+                        string[] temp = new string[4];
+                        for (int j = 0; j < 4; j++)
                         {
-                            wikiArray[x, y] = Convert.ToString(value: bin.Deserialize(stream));
+                            temp[j] = (string)bin.Deserialize(stream);
                         }
+                        Add(temp[0], temp[1], temp[2], temp[3]);
                     }
                 }
 
@@ -71,34 +66,26 @@ namespace Wiki_Prototype
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            string fileName = "definiton_01.txt";
-            SaveFileDialog SaveText = new SaveFileDialog();
-            DialogResult sr = SaveText.ShowDialog();
-            SaveText.Filter = "Text Files | *.txt";
-            SaveText.DefaultExt = "txt";
-            if (sr == DialogResult.OK)
-            {
-                fileName = SaveText.FileName;
-
-            }
-            if (sr == DialogResult.Cancel)
-            {
-                SaveText.FileName = fileName;
-            }
-
+            
+            
+           
             try
             {
-                using (StreamWriter writer = new StreamWriter(fileName, false))
+                
+               // using (BinaryWriter  bwriter = new BinaryWriter(currentFileName, FileMode.Create))
                 {
-                    foreach (var definiton in wikiArray)
+                    for (int i=1 ; i <= item ; i++)
                     {
-                        writer.WriteLine(definiton);
+                        bwriter.Write(wikiArray[i,name]);
+                        bwriter.Write(wikiArray[i,category]);
+                        bwriter.Write(wikiArray[i,structure]);
+                        bwriter.Write(wikiArray[i,definition]);
                     }
                 }
             }
-            catch (IOException)
+            catch (IOException io)
             {
-                MessageBox.Show("File NOT saved");
+                MessageBox.Show(io.Message+ "\nFile NOT saved");
             }
         }
 
@@ -110,18 +97,19 @@ namespace Wiki_Prototype
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            if (listBox.SelectedIndex != -1)
+            if (arrayBox.SelectedIndex != -1)
             {
 
-                listBox.SetSelected(listBox.SelectedIndex, true);
-                listBox.Items.RemoveAt(listBox.SelectedIndex);
-                wikiArray[listBox.SelectedIndex, 1] = wikiArray[item - 1, 1];
-                item--;
-
+                int selected = arrayBox.SelectedIndex;
+                wikiArray[selected, name] = "";
+                wikiArray[selected, category] = "";
+                wikiArray[selected, structure] = "";
+                wikiArray[selected, definition] = "";
                 Clear();
+                //Sort():
                 Display();
 
-
+                item--;
             }
 
             else
@@ -132,40 +120,96 @@ namespace Wiki_Prototype
             textBoxSearch.Focus();
         }
 
-        private void listBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void arrayBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listBox.SelectedIndex != -1)
+            if (arrayBox.SelectedIndex != -1)
             {
-                string dataItem = listBox.SelectedItem.ToString();
-                int dataItemIndex = listBox.FindString(dataItem);
-                textBoxSearch.Text = wikiArray[dataItemIndex, 1].ToString();
+                int element = arrayBox.SelectedIndex;
+                DisplayBox(element);
                 textBoxSearch.Focus();
 
             }
             else
             {
-                MessageBox.Show("Please select from the List Box", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please select from the array Box", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        #endregion
+        private void buttonSearch_Click(object sender, EventArgs e)
+        {
+            Sort();
 
+            if (!string.IsNullOrEmpty(textBoxSearch.Text))
+            {
+                string target = textBoxSearch.Text;
+                int min = 0;
+                int max = item - 1;
+                int mid = 0;
+                bool found = false;
+
+                while (min <= max)
+                {
+                    mid = (min + max) / 2;
+                    if (string.Compare(target, wikiArray[mid,0]) == 0)
+                    {
+                        found = true;
+                        break;
+                    }
+                    else if (string.Compare(target, wikiArray[mid, 0]) > 0)
+                    {
+                        max = mid - 1;
+                    }
+                    else
+                    {
+                        min = mid + 1;
+                    }
+                }
+                if (found)
+                {
+                    MessageBox.Show("The target was Found at element[" + mid + "]", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    textBoxSearch.Clear();
+                    DisplayBox(mid);
+
+                }
+                else
+                {
+                    MessageBox.Show("The target was Not Found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); // The program must generate an error message if the search is not successful. 
+                }
+            }
+
+            else{ 
+                MessageBox.Show("Search Box is Empty", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+             }
+        }
+
+
+        private void buttonSort_Click(object sender, EventArgs e)
+        {
+            Sort();
+        }
+        #endregion
 
         #region Methods
         private void Display()
         {
-            listBox.Items.Clear();
+            arrayBox.Items.Clear();
             for (int x = 0; x < rowSize; x++)
             {
-                string oneLine = "";
-                for (int y = 0; y < 2; y++)
-                {
-                    oneLine = wikiArray[x, y] + "   " + wikiArray[x, y];
-                }
-                listBox.Items.Add(oneLine);
+                string Name = "";
+                string Category = "";
+
+                Name = wikiArray[x, name];
+                Category = wikiArray[x, category];
+                String rowAdd = Name + "                             " + Category;
+                arrayBox.Items.Add(rowAdd);
+
             }
 
         }
+
+
+
         private void Clear()
         {
             textBoxCategory.Clear();
@@ -182,6 +226,9 @@ namespace Wiki_Prototype
             textBoxStructure.Focus();
             textBoxSearch.Focus();
         }
+
+       
+
         private void Tofill()
         {
 
@@ -189,7 +236,60 @@ namespace Wiki_Prototype
             wikiArray[0, 1] = "hi";
             wikiArray[0, 2] = "hi";
             wikiArray[0, 3] = "hi";
-            item = 1;
+            item++;
+        }
+        private void DisplayBox(int x)
+        {
+            textBoxName.Text = wikiArray[x, name];
+            textBoxCategory.Text = wikiArray[x, category];
+            textBoxStructure.Text = wikiArray[x, structure];
+            textBoxDefinition.Text = wikiArray[x, definition];
+
+        }
+        private void Sort()
+        {
+            string[] temp = new string[4];
+
+            //char.ToLower(wikiArray[j, name][0] <;
+            for (int i = 0; i < item ; i++)
+            {                 
+                
+                for (int j = 0; j < item - 1; j++)
+                {
+
+                    if (char.ToLower(wikiArray[i, name][0]) < char.ToLower(wikiArray[j, name][0])){
+                       
+                        temp[0] = wikiArray[j, 0];
+                        temp[1] = wikiArray[j, 1];
+                        temp[2] = wikiArray[j, 2];
+                        temp[3] = wikiArray[j, 3];
+
+                        wikiArray[j, 0] = wikiArray[j + 1, 0];
+                        wikiArray[j, 1] = wikiArray[j + 1, 1];
+                        wikiArray[j, 2] = wikiArray[j + 1, 2];
+                        wikiArray[j, 3] = wikiArray[j + 1, 3];
+
+                        wikiArray[j + 1, 0] = temp[0];
+                        wikiArray[j + 1, 1] = temp[1];
+                        wikiArray[j + 1, 2] = temp[2];
+                        wikiArray[j + 1, 3] = temp[3];
+
+                    }
+                }
+            }
+            Display();
+        }
+        private void Add(string s1, string s2, string s3, string s4)
+        {
+           
+                wikiArray[item, name] = s1;
+                wikiArray[item, category] = s2;
+                wikiArray[item, structure] = s3;
+                wikiArray[item, definition] = s4;
+                item++;
+                Display();
+                Clear();
+          
         }
         #endregion
 
