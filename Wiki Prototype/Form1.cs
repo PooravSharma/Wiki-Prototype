@@ -8,11 +8,12 @@ namespace Wiki_Prototype
         {
             InitializeComponent();
         }
-        static int rowSize = 15, item = 0;
+        static int rowSize = 12;        
         static int coloumSize = 4;
+        static int item = 0;
         int name = 0, category = 1, structure = 2, definition = 3;
         string[,] wikiArray = new string[rowSize, coloumSize];
-        string currentFileName = "definition_00.bin";
+        string currentFileName = "definition.bin";
 
         #region Buttons
         private void buttonAdd_Click(object sender, EventArgs e)
@@ -21,38 +22,33 @@ namespace Wiki_Prototype
             if (!string.IsNullOrEmpty(textBoxName.Text) && !string.IsNullOrEmpty(textBoxCategory.Text) && !string.IsNullOrEmpty(textBoxStructure.Text) && !string.IsNullOrEmpty(textBoxDefinition.Text))
             {
                 Add(textBoxName.Text, textBoxCategory.Text, textBoxStructure.Text, textBoxDefinition.Text);
+                
             }
             else
             {
                 MessageBox.Show("Please fill all the textboxes", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            
         }
 
         private void buttonLoad_Click(object sender, EventArgs e)
         {
-            string fileName = "definition_01.bin";
-            OpenFileDialog OpenText = new OpenFileDialog();
-            DialogResult sr = OpenText.ShowDialog();
-            OpenText.Filter = "Binary Files | *.bin";
-            OpenText.DefaultExt = "txt";
-            if (sr == DialogResult.OK)
-            {
-                fileName = OpenText.FileName;
-            }
-            currentFileName = fileName;
+             
             try
             {
-                using (Stream stream = File.Open(fileName, FileMode.Open))
+                using (Stream stream = File.Open(currentFileName, FileMode.Open))
                 {
                     BinaryFormatter bin = new BinaryFormatter();
-                    for (int i = 0; i < 12; i++)
+                    for (int i = 0; i < rowSize; i++)
                     {
                         string[] temp = new string[4];
-                        for (int j = 0; j < 4; j++)
+                        for (int j = 0; j < coloumSize; j++)
                         {
-                            temp[j] = (string)bin.Deserialize(stream);
+                            wikiArray[i, j] = (string)bin.Deserialize(stream);
+                           // temp[j] = (string)bin.Deserialize(stream);
+                            // Add(temp[0], temp[1], temp[2], temp[3]);                        
                         }
-                        Add(temp[0], temp[1], temp[2], temp[3]);
+                        item++;
                     }
                 }
 
@@ -66,15 +62,14 @@ namespace Wiki_Prototype
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            
-            
-           
+            string fileName = currentFileName;
+
             try
             {
-                
-               // using (BinaryWriter  bwriter = new BinaryWriter(currentFileName, FileMode.Create))
+                using (Stream stream = File.Open(fileName, FileMode.Create))
                 {
-                    for (int i=1 ; i <= item ; i++)
+                    BinaryWriter bwriter = new BinaryWriter(stream);
+                   for (int i=0 ; i < item ; i++)
                     {
                         bwriter.Write(wikiArray[i,name]);
                         bwriter.Write(wikiArray[i,category]);
@@ -82,11 +77,14 @@ namespace Wiki_Prototype
                         bwriter.Write(wikiArray[i,definition]);
                     }
                 }
+                MessageBox.Show("Array saved", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             }
-            catch (IOException io)
+            catch (IOException ex)
             {
-                MessageBox.Show(io.Message+ "\nFile NOT saved");
+                MessageBox.Show(ex.ToString());
             }
+            
         }
 
         private void buttonAutofill_Click(object sender, EventArgs e)
@@ -143,19 +141,19 @@ namespace Wiki_Prototype
             {
                 string target = textBoxSearch.Text;
                 int min = 0;
-                int max = item - 1;
+                int max = item-1;
                 int mid = 0;
                 bool found = false;
 
                 while (min <= max)
                 {
                     mid = (min + max) / 2;
-                    if (string.Compare(target, wikiArray[mid,0]) == 0)
+                    if (string.Compare(wikiArray[mid,name], target) == 0)
                     {
                         found = true;
                         break;
                     }
-                    else if (string.Compare(target, wikiArray[mid, 0]) > 0)
+                    else if (string.Compare(wikiArray[mid, name], target) > 0)
                     {
                         max = mid - 1;
                     }
@@ -166,7 +164,7 @@ namespace Wiki_Prototype
                 }
                 if (found)
                 {
-                    MessageBox.Show("The target was Found at element[" + mid + "]", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("The target was found at element[" + mid + "]", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     textBoxSearch.Clear();
                     DisplayBox(mid);
@@ -183,14 +181,43 @@ namespace Wiki_Prototype
              }
         }
 
-
         private void buttonSort_Click(object sender, EventArgs e)
         {
             Sort();
         }
+
+
         #endregion
 
         #region Methods
+        private void Load()
+        {
+            string fileName = currentFileName;
+            try
+            {
+                using (Stream stream = File.Open(fileName, FileMode.Open))
+                {
+                    BinaryFormatter bin = new BinaryFormatter();
+                    for (int i = 0; i < 12; i++)
+                    {
+                        string[] temp = new string[4];
+                        for (int j = 0; j < 4; j++)
+                        {
+                            temp[j] = (string)bin.Deserialize(stream);
+                        }
+                        Add(temp[0], temp[1], temp[2], temp[3]);
+                        item++;
+                    }
+                }
+
+                Display();
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("File counld not be openned");
+            }
+        }
+
         private void Display()
         {
             arrayBox.Items.Clear();
@@ -208,8 +235,6 @@ namespace Wiki_Prototype
 
         }
 
-
-
         private void Clear()
         {
             textBoxCategory.Clear();
@@ -217,17 +242,7 @@ namespace Wiki_Prototype
             textBoxName.Clear();
             textBoxStructure.Clear();
             textBoxSearch.Clear();
-        }
-        private void Focus()
-        {
-            textBoxCategory.Focus();
-            textBoxDefinition.Focus();
-            textBoxName.Focus();
-            textBoxStructure.Focus();
-            textBoxSearch.Focus();
-        }
-
-       
+        }          
 
         private void Tofill()
         {
@@ -238,6 +253,9 @@ namespace Wiki_Prototype
             wikiArray[0, 3] = "hi";
             item++;
         }
+
+      
+
         private void DisplayBox(int x)
         {
             textBoxName.Text = wikiArray[x, name];
@@ -246,6 +264,8 @@ namespace Wiki_Prototype
             textBoxDefinition.Text = wikiArray[x, definition];
 
         }
+
+
         private void Sort()
         {
             string[] temp = new string[4];
@@ -279,6 +299,9 @@ namespace Wiki_Prototype
             }
             Display();
         }
+
+       
+
         private void Add(string s1, string s2, string s3, string s4)
         {
            
@@ -291,7 +314,31 @@ namespace Wiki_Prototype
                 Clear();
           
         }
+
+        
         #endregion
 
+        #region Mouseclick
+        private void textBoxName_DoubleClick(object sender, EventArgs e)
+        {
+            textBoxName.Clear();
+        }
+
+        private void textBoxCategory_DoubleClick(object sender, EventArgs e)
+        {
+            textBoxCategory.Clear();
+           
+        }
+        private void textBoxStructure_DoubleClick(object sender, EventArgs e)
+        {
+            
+            textBoxStructure.Clear();
+           
+        }
+        private void textBoxDefinition_DoubleClick(object sender, EventArgs e)
+        {
+            textBoxDefinition.Clear();            
+        }
+        #endregion
     }
 }
