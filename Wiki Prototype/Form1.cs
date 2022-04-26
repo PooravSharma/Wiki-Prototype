@@ -8,12 +8,12 @@ namespace Wiki_Prototype
         {
             InitializeComponent();
         }
-        static int rowSize = 12;        
-        static int coloumSize = 4;
+        static int rowSize = 12;
+        static int coloumSize = 12;
         static int item = 0;
         int name = 0, category = 1, structure = 2, definition = 3;
         string[,] wikiArray = new string[rowSize, coloumSize];
-        string currentFileName = "definition.bin";
+        string currentFileName = "definition.dat";
 
         #region Buttons
         private void buttonAdd_Click(object sender, EventArgs e)
@@ -22,69 +22,62 @@ namespace Wiki_Prototype
             if (!string.IsNullOrEmpty(textBoxName.Text) && !string.IsNullOrEmpty(textBoxCategory.Text) && !string.IsNullOrEmpty(textBoxStructure.Text) && !string.IsNullOrEmpty(textBoxDefinition.Text))
             {
                 Add(textBoxName.Text, textBoxCategory.Text, textBoxStructure.Text, textBoxDefinition.Text);
-                
+
             }
             else
             {
                 MessageBox.Show("Please fill all the textboxes", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
         }
 
         private void buttonLoad_Click(object sender, EventArgs e)
-        {
-             
-            try
-            {
-                using (Stream stream = File.Open(currentFileName, FileMode.Open))
-                {
-                    BinaryFormatter bin = new BinaryFormatter();
-                    for (int i = 0; i < rowSize; i++)
-                    {
-                        string[] temp = new string[4];
-                        for (int j = 0; j < coloumSize; j++)
-                        {
-                            wikiArray[i, j] = (string)bin.Deserialize(stream);
-                           // temp[j] = (string)bin.Deserialize(stream);
-                            // Add(temp[0], temp[1], temp[2], temp[3]);                        
-                        }
-                        item++;
-                    }
-                }
+        {// Open the text file using a stream reader.
 
-                Display();
-            }
-            catch (IOException)
-            {
-                MessageBox.Show("File counld not be openned");
-            }
+            string fileName = currentFileName;
+            OpenFileDialog OpenText = new OpenFileDialog();
+            DialogResult sr = OpenText.ShowDialog();
+            fileName = OpenText.FileName;
+            autoLoad(fileName);
+
+
         }
-
         private void buttonSave_Click(object sender, EventArgs e)
         {
+            Sort();
             string fileName = currentFileName;
+            SaveFileDialog SaveText = new SaveFileDialog();
+            DialogResult sr = SaveText.ShowDialog();
+            SaveText.Filter = "Binary Files | *.dat";
+            SaveText.DefaultExt = "dat";
+            if (sr == DialogResult.OK)
+            {
+                fileName = SaveText.FileName;
 
+            }
+            if (sr == DialogResult.Cancel)
+            {
+                SaveText.FileName = fileName;
+            }
             try
             {
-                using (Stream stream = File.Open(fileName, FileMode.Create))
+                using (Stream stream = File.Open(currentFileName, FileMode.Create))
                 {
-                    BinaryWriter bwriter = new BinaryWriter(stream);
-                   for (int i=0 ; i < item ; i++)
+                    BinaryFormatter bin = new BinaryFormatter();
+                    for (int y = 0; y < item; y++)
                     {
-                        bwriter.Write(wikiArray[i,name]);
-                        bwriter.Write(wikiArray[i,category]);
-                        bwriter.Write(wikiArray[i,structure]);
-                        bwriter.Write(wikiArray[i,definition]);
+                        for (int x = 0; x < 4; x++)
+                        {
+                            bin.Serialize(stream, wikiArray[y, x]);
+                        }
                     }
                 }
-                MessageBox.Show("Array saved", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             }
             catch (IOException ex)
             {
                 MessageBox.Show(ex.ToString());
             }
-            
+
         }
 
         private void buttonAutofill_Click(object sender, EventArgs e)
@@ -99,12 +92,21 @@ namespace Wiki_Prototype
             {
 
                 int selected = arrayBox.SelectedIndex;
+                while (selected < item - 1)
+                {
+                    wikiArray[selected, name] = wikiArray[selected + 1, name];
+                    wikiArray[selected, category] = wikiArray[selected + 1, category];
+                    wikiArray[selected, structure] = wikiArray[selected + 1, structure];
+                    wikiArray[selected, definition] = wikiArray[selected + 1, definition];
+                    selected++;
+                }
+
                 wikiArray[selected, name] = "";
                 wikiArray[selected, category] = "";
                 wikiArray[selected, structure] = "";
                 wikiArray[selected, definition] = "";
                 Clear();
-                //Sort():
+
                 Display();
 
                 item--;
@@ -116,6 +118,7 @@ namespace Wiki_Prototype
 
             }
             textBoxSearch.Focus();
+            Sort();
         }
 
         private void arrayBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -141,14 +144,14 @@ namespace Wiki_Prototype
             {
                 string target = textBoxSearch.Text;
                 int min = 0;
-                int max = item-1;
+                int max = item - 1;
                 int mid = 0;
                 bool found = false;
 
                 while (min <= max)
                 {
                     mid = (min + max) / 2;
-                    if (string.Compare(wikiArray[mid,name], target) == 0)
+                    if (string.Compare(wikiArray[mid, name], target) == 0)
                     {
                         found = true;
                         break;
@@ -176,9 +179,10 @@ namespace Wiki_Prototype
                 }
             }
 
-            else{ 
+            else
+            {
                 MessageBox.Show("Search Box is Empty", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
-             }
+            }
         }
 
         private void buttonSort_Click(object sender, EventArgs e)
@@ -186,13 +190,59 @@ namespace Wiki_Prototype
             Sort();
         }
 
+        private void buttonEdit_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(textBoxName.Text) && !string.IsNullOrEmpty(textBoxCategory.Text) && !string.IsNullOrEmpty(textBoxStructure.Text) && !string.IsNullOrEmpty(textBoxDefinition.Text))
+            {
+                if (arrayBox.SelectedItem != null)
+                {
+
+                    int element = arrayBox.SelectedIndex;
+
+                    wikiArray[element, name] = textBoxName.Text;
+                    wikiArray[element, category] = textBoxCategory.Text;
+                    wikiArray[element, structure] = textBoxStructure.Text;
+                    wikiArray[element, definition] = textBoxDefinition.Text;
+                    MessageBox.Show("Edit complete", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Select from array box", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            Display();
+            Clear();
+            textBoxSearch.Focus();
+        }
+
+
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < item; i++) 
+            { 
+                wikiArray[i, name] = "";
+            wikiArray[i, category] = "";
+            wikiArray[i, structure] = "";
+            wikiArray[i, definition] = "";
+             }
+            Clear();
+
+            Display();
+
+            item--;
+        }
+
+        private void Wiki_Prototype_Load(object sender, EventArgs e)
+        {
+            autoLoad("definition.dat");
+        }
 
         #endregion
 
         #region Methods
-        private void Load()
+        private void autoLoad(string fileName)
         {
-            string fileName = currentFileName;
             try
             {
                 using (Stream stream = File.Open(fileName, FileMode.Open))
@@ -206,8 +256,9 @@ namespace Wiki_Prototype
                             temp[j] = (string)bin.Deserialize(stream);
                         }
                         Add(temp[0], temp[1], temp[2], temp[3]);
-                        item++;
                     }
+
+
                 }
 
                 Display();
@@ -242,19 +293,75 @@ namespace Wiki_Prototype
             textBoxName.Clear();
             textBoxStructure.Clear();
             textBoxSearch.Clear();
-        }          
+        }
 
         private void Tofill()
         {
 
-            wikiArray[0, 0] = "hi";
-            wikiArray[0, 1] = "hi";
-            wikiArray[0, 2] = "hi";
-            wikiArray[0, 3] = "hi";
-            item++;
+            wikiArray[0, name] = "Array";
+            wikiArray[0, category] = "Array";
+            wikiArray[0, structure] = "Linear";
+            wikiArray[0, definition] = "A list of finite numbers of elements stored in the memory. In a linear array, we can store only homogeneous data elements. Elements of the array form a sequence or linear list, that can have the same type of data. Each element of the array is referred by an index set.";
+
+            wikiArray[1, name] = "Two Dimension Array";
+            wikiArray[1, category] = "Array";
+            wikiArray[1, structure] = "Linear";
+            wikiArray[1, definition] = "A two-dimensional array could be considered to have “rows” and “columns”. The declaration of a two- dimensional array is extension of the declaration for a 1-D (linear) array. The first dimension is the “row” and the second is the “column”."; 
+            
+            wikiArray[2, name] = "List";
+            wikiArray[2, category] = "List";
+            wikiArray[2, structure] = "Linear";
+            wikiArray[2, definition] = "A list is an abstract data type that represents a finite number of ordered values, where the same value may occur more than once. An instance of a list is a computer representation of the mathematical concept of a tuple or finite sequence; the infinite analogy of a list is a stream.";
+
+            wikiArray[3, name] = "Linked list";
+            wikiArray[3, category] = "List";
+            wikiArray[3, structure] = "Linear";
+            wikiArray[3, definition] = "A linked list is a linear collection of data elements whose order is not given by their physical placement in memory. Instead, each element points to the next. It is a data structure consisting of a collection of nodes which together represent a sequence.";
+            
+            wikiArray[4, name] = "Self-Balance Tree";
+            wikiArray[4, category] = "Tree";
+            wikiArray[4, structure] = "Non-Linear";
+            wikiArray[4, definition] = "A self-balancing binary search tree (BST) is any node-based tree that automatically keeps its height (maximal number of levels below the root) small in the face of arbitrary item insertions and deletions.";
+
+            wikiArray[5, name] = "Heap";
+            wikiArray[5, category] = "Tree";
+            wikiArray[5, structure] = "Non-Linear";
+            wikiArray[5, definition] = "A heap is a specialized tree-based data structure which is essentially an almost complete tree that satisfies the heap property: in a max heap, for any given node C, if P is a parent node of C, then the key (the value) of P is greater than or equal to the key to C."; 
+            
+            wikiArray[6, name] = "Binary Search Tree";
+            wikiArray[6, category] = "Tree";
+            wikiArray[6, structure] = "Non-Linear";
+            wikiArray[6, definition] = "Is a rooted binary tree data structure whose internal nodes each store a key greater than all the keys in the node's left subtree and less than those in its right subtree.";
+
+            wikiArray[7, name] = "Graph";
+            wikiArray[7, category] = "Graph";
+            wikiArray[7, structure] = "Non-Linear";
+            wikiArray[7, definition] = "A graph is a pictorial representation of a set of objects where some pairs of objects are connected by links. The interconnected objects are represented by points termed as vertices, and the links that connect the vertices are called edges.";
+            
+            wikiArray[8, name] = "Set";
+            wikiArray[8, category] = "Abstract";
+            wikiArray[8, structure] = "Non-Linear";
+            wikiArray[8, definition] = "A set is a data structure that can store any number of unique values in any order you so wish. Sets are different from arrays in the sense that they only allow non-repeated, unique values within them.";
+
+            wikiArray[9, name] = "Queue";
+            wikiArray[9, category] = "Abstract";
+            wikiArray[9, structure] = "Linear";
+            wikiArray[9, definition] = "A collection of items in which only the earliest added item may be accessed. Basic operations are added (to the tail) or enqueue and delete (from the head) or dequeue.";
+            
+            wikiArray[10, name] = "Stack";
+            wikiArray[10, category] = "Abstract";
+            wikiArray[10, structure] = "Linear";
+            wikiArray[10, definition] = "A stack is a linear data structure that follows the principle of Last in First Out (LIFO). This means the last element inserted inside the stack is removed first. You can think of the stack data structure as the pile of plates on top of another. Stack representation like a pile of plate.";
+
+            wikiArray[11, name] = "Hash Table";
+            wikiArray[11, category] = "Hash";
+            wikiArray[11, structure] = "Non-Linear";
+            wikiArray[11, definition] = "Hash Table is a data structure which stores data in an associative manner. In a hash table, data is stored in an array format, where each data value has its own unique index value. Access of data becomes very fast if we know the index of the desired data."; 
+              
+            item = 12;
         }
 
-      
+
 
         private void DisplayBox(int x)
         {
@@ -270,41 +377,49 @@ namespace Wiki_Prototype
         {
             string[] temp = new string[4];
 
-            //char.ToLower(wikiArray[j, name][0] <;
-            for (int i = 0; i < item ; i++)
-            {                 
-                
-                for (int j = 0; j < item - 1; j++)
+            
+                for (int i = 0; i < item; i++)
                 {
 
-                    if (char.ToLower(wikiArray[i, name][0]) < char.ToLower(wikiArray[j, name][0])){
-                       
-                        temp[0] = wikiArray[j, 0];
-                        temp[1] = wikiArray[j, 1];
-                        temp[2] = wikiArray[j, 2];
-                        temp[3] = wikiArray[j, 3];
+                    for (int j = 1; j < item - i; j++)
+                    {
 
-                        wikiArray[j, 0] = wikiArray[j + 1, 0];
-                        wikiArray[j, 1] = wikiArray[j + 1, 1];
-                        wikiArray[j, 2] = wikiArray[j + 1, 2];
-                        wikiArray[j, 3] = wikiArray[j + 1, 3];
+                        if (char.ToLower(wikiArray[j - 1, name][0]) > char.ToLower(wikiArray[j, name][0]))
+                        {
+                            temp[0] = wikiArray[j - 1, 0];
+                            temp[1] = wikiArray[j - 1, 1];
+                            temp[2] = wikiArray[j - 1, 2];
+                            temp[3] = wikiArray[j - 1, 3];
 
-                        wikiArray[j + 1, 0] = temp[0];
-                        wikiArray[j + 1, 1] = temp[1];
-                        wikiArray[j + 1, 2] = temp[2];
-                        wikiArray[j + 1, 3] = temp[3];
 
+
+                            wikiArray[j - 1, 0] = wikiArray[j, 0];
+                            wikiArray[j - 1, 1] = wikiArray[j, 1];
+                            wikiArray[j - 1, 2] = wikiArray[j, 2];
+                            wikiArray[j - 1, 3] = wikiArray[j, 3];
+
+                            wikiArray[j, 0] = temp[0];
+                            wikiArray[j, 1] = temp[1];
+                            wikiArray[j, 2] = temp[2];
+                            wikiArray[j, 3] = temp[3];
+
+                        }
                     }
                 }
-            }
+            
+           
             Display();
         }
 
-       
+        private void bubbleSwap(int x, int y)
+        {
+
+        }
 
         private void Add(string s1, string s2, string s3, string s4)
         {
-           
+            try
+            {
                 wikiArray[item, name] = s1;
                 wikiArray[item, category] = s2;
                 wikiArray[item, structure] = s3;
@@ -312,10 +427,15 @@ namespace Wiki_Prototype
                 item++;
                 Display();
                 Clear();
-          
+            }
+            catch
+            {
+                MessageBox.Show("Array Box is full");
+            }
+
         }
 
-        
+
         #endregion
 
         #region Mouseclick
@@ -327,18 +447,20 @@ namespace Wiki_Prototype
         private void textBoxCategory_DoubleClick(object sender, EventArgs e)
         {
             textBoxCategory.Clear();
-           
+
         }
         private void textBoxStructure_DoubleClick(object sender, EventArgs e)
         {
-            
+
             textBoxStructure.Clear();
-           
+
         }
         private void textBoxDefinition_DoubleClick(object sender, EventArgs e)
         {
-            textBoxDefinition.Clear();            
+            textBoxDefinition.Clear();
         }
+
+
         #endregion
     }
 }
