@@ -171,6 +171,7 @@ namespace Wiki_Prototype
 
                     textBoxSearch.Clear();
                     DisplayBox(mid);
+                    arrayBox.SelectedIndex = mid;
 
                 }
                 else
@@ -375,9 +376,10 @@ namespace Wiki_Prototype
 
         private void Sort()
         {
-            string[] temp = new string[4];
+            try {
+                
 
-            
+
                 for (int i = 0; i < item; i++)
                 {
 
@@ -386,33 +388,42 @@ namespace Wiki_Prototype
 
                         if (char.ToLower(wikiArray[j - 1, name][0]) > char.ToLower(wikiArray[j, name][0]))
                         {
-                            temp[0] = wikiArray[j - 1, 0];
-                            temp[1] = wikiArray[j - 1, 1];
-                            temp[2] = wikiArray[j - 1, 2];
-                            temp[3] = wikiArray[j - 1, 3];
-
-
-
-                            wikiArray[j - 1, 0] = wikiArray[j, 0];
-                            wikiArray[j - 1, 1] = wikiArray[j, 1];
-                            wikiArray[j - 1, 2] = wikiArray[j, 2];
-                            wikiArray[j - 1, 3] = wikiArray[j, 3];
-
-                            wikiArray[j, 0] = temp[0];
-                            wikiArray[j, 1] = temp[1];
-                            wikiArray[j, 2] = temp[2];
-                            wikiArray[j, 3] = temp[3];
+                            bubbleSwap(j);
 
                         }
                     }
                 }
-            
-           
-            Display();
-        }
+            }
+            catch
+            {
+                MessageBox.Show("Array not filled");
+            }
 
-        private void bubbleSwap(int x, int y)
+
+
+            Display();
+            }
+
+        private void bubbleSwap(int j)
         {
+            string[] temp = new string[4];
+
+            temp[0] = wikiArray[j - 1, 0];
+            temp[1] = wikiArray[j - 1, 1];
+            temp[2] = wikiArray[j - 1, 2];
+            temp[3] = wikiArray[j - 1, 3];
+
+
+
+            wikiArray[j - 1, 0] = wikiArray[j, 0];
+            wikiArray[j - 1, 1] = wikiArray[j, 1];
+            wikiArray[j - 1, 2] = wikiArray[j, 2];
+            wikiArray[j - 1, 3] = wikiArray[j, 3];
+
+            wikiArray[j, 0] = temp[0];
+            wikiArray[j, 1] = temp[1];
+            wikiArray[j, 2] = temp[2];
+            wikiArray[j, 3] = temp[3];
 
         }
 
