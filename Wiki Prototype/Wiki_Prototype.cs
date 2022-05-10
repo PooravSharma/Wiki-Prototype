@@ -12,10 +12,13 @@ namespace Wiki_Prototype
         static int coloumSize = 12;
         static int item = 0;
         int name = 0, category = 1, structure = 2, definition = 3;
+
+        //8.1	Create a global 2D string array, use static variables for the dimensions(row, column),
         string[,] wikiArray = new string[rowSize, coloumSize];
         string currentFileName = "definition.dat";
 
         #region Buttons
+        //8.2	Create an ADD button that will store the information from the 4 text boxes into the 2D array,
         private void buttonAdd_Click(object sender, EventArgs e)
         {
 
@@ -31,6 +34,7 @@ namespace Wiki_Prototype
 
         }
 
+        //8.9	Create a LOAD button that will read the information from a binary file called definitions.dat into the 2D array
         private void buttonLoad_Click(object sender, EventArgs e)
         {// Open the text file using a stream reader.
 
@@ -42,6 +46,7 @@ namespace Wiki_Prototype
 
 
         }
+        //8.8Create a SAVE button so the information from the 2D array can be written into a binary file called definitions.dat which is sorted by Name
         private void buttonSave_Click(object sender, EventArgs e)
         {
             Sort();
@@ -121,6 +126,7 @@ namespace Wiki_Prototype
             Sort();
         }
 
+        //8.7Create a method so the user can select a definition (Name) from the Listbox and all the information is displayed in the appropriate Textboxes
         private void arrayBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (arrayBox.SelectedIndex != -1)
@@ -135,7 +141,7 @@ namespace Wiki_Prototype
                 MessageBox.Show("Please select from the array Box", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        //8.5	Write the code for a Binary Search for the Name in the 2D array and display the information in the other textboxes when found, add suitable feedback if the search in not successful and clear the search textbox (do not use any built-in array methods)
         private void buttonSearch_Click(object sender, EventArgs e)
         {
             Sort();
@@ -167,17 +173,19 @@ namespace Wiki_Prototype
                 }
                 if (found)
                 {
+                    arrayBox.SelectedIndex = mid;
                     MessageBox.Show("The target was found at element[" + mid + "]", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    textBoxSearch.Clear();
+
                     DisplayBox(mid);
-                    arrayBox.SelectedIndex = mid;
+
 
                 }
                 else
                 {
                     MessageBox.Show("The target was Not Found", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); // The program must generate an error message if the search is not successful. 
                 }
+                textBoxSearch.Clear();
             }
 
             else
@@ -220,13 +228,13 @@ namespace Wiki_Prototype
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < item; i++) 
-            { 
+            for (int i = 0; i < item; i++)
+            {
                 wikiArray[i, name] = "";
-            wikiArray[i, category] = "";
-            wikiArray[i, structure] = "";
-            wikiArray[i, definition] = "";
-             }
+                wikiArray[i, category] = "";
+                wikiArray[i, structure] = "";
+                wikiArray[i, definition] = "";
+            }
             Clear();
 
             Display();
@@ -270,6 +278,7 @@ namespace Wiki_Prototype
             }
         }
 
+        //8.6 Create a display method that will show the following information in a List box: Name and Category
         private void Display()
         {
             arrayBox.Items.Clear();
@@ -307,8 +316,8 @@ namespace Wiki_Prototype
             wikiArray[1, name] = "Two Dimension Array";
             wikiArray[1, category] = "Array";
             wikiArray[1, structure] = "Linear";
-            wikiArray[1, definition] = "A two-dimensional array could be considered to have “rows” and “columns”. The declaration of a two- dimensional array is extension of the declaration for a 1-D (linear) array. The first dimension is the “row” and the second is the “column”."; 
-            
+            wikiArray[1, definition] = "A two-dimensional array could be considered to have “rows” and “columns”. The declaration of a two- dimensional array is extension of the declaration for a 1-D (linear) array. The first dimension is the “row” and the second is the “column”.";
+
             wikiArray[2, name] = "List";
             wikiArray[2, category] = "List";
             wikiArray[2, structure] = "Linear";
@@ -318,7 +327,7 @@ namespace Wiki_Prototype
             wikiArray[3, category] = "List";
             wikiArray[3, structure] = "Linear";
             wikiArray[3, definition] = "A linked list is a linear collection of data elements whose order is not given by their physical placement in memory. Instead, each element points to the next. It is a data structure consisting of a collection of nodes which together represent a sequence.";
-            
+
             wikiArray[4, name] = "Self-Balance Tree";
             wikiArray[4, category] = "Tree";
             wikiArray[4, structure] = "Non-Linear";
@@ -327,8 +336,8 @@ namespace Wiki_Prototype
             wikiArray[5, name] = "Heap";
             wikiArray[5, category] = "Tree";
             wikiArray[5, structure] = "Non-Linear";
-            wikiArray[5, definition] = "A heap is a specialized tree-based data structure which is essentially an almost complete tree that satisfies the heap property: in a max heap, for any given node C, if P is a parent node of C, then the key (the value) of P is greater than or equal to the key to C."; 
-            
+            wikiArray[5, definition] = "A heap is a specialized tree-based data structure which is essentially an almost complete tree that satisfies the heap property: in a max heap, for any given node C, if P is a parent node of C, then the key (the value) of P is greater than or equal to the key to C.";
+
             wikiArray[6, name] = "Binary Search Tree";
             wikiArray[6, category] = "Tree";
             wikiArray[6, structure] = "Non-Linear";
@@ -338,7 +347,7 @@ namespace Wiki_Prototype
             wikiArray[7, category] = "Graph";
             wikiArray[7, structure] = "Non-Linear";
             wikiArray[7, definition] = "A graph is a pictorial representation of a set of objects where some pairs of objects are connected by links. The interconnected objects are represented by points termed as vertices, and the links that connect the vertices are called edges.";
-            
+
             wikiArray[8, name] = "Set";
             wikiArray[8, category] = "Abstract";
             wikiArray[8, structure] = "Non-Linear";
@@ -348,7 +357,7 @@ namespace Wiki_Prototype
             wikiArray[9, category] = "Abstract";
             wikiArray[9, structure] = "Linear";
             wikiArray[9, definition] = "A collection of items in which only the earliest added item may be accessed. Basic operations are added (to the tail) or enqueue and delete (from the head) or dequeue.";
-            
+
             wikiArray[10, name] = "Stack";
             wikiArray[10, category] = "Abstract";
             wikiArray[10, structure] = "Linear";
@@ -357,8 +366,8 @@ namespace Wiki_Prototype
             wikiArray[11, name] = "Hash Table";
             wikiArray[11, category] = "Hash";
             wikiArray[11, structure] = "Non-Linear";
-            wikiArray[11, definition] = "Hash Table is a data structure which stores data in an associative manner. In a hash table, data is stored in an array format, where each data value has its own unique index value. Access of data becomes very fast if we know the index of the desired data."; 
-              
+            wikiArray[11, definition] = "Hash Table is a data structure which stores data in an associative manner. In a hash table, data is stored in an array format, where each data value has its own unique index value. Access of data becomes very fast if we know the index of the desired data.";
+
             item = 12;
         }
 
@@ -373,11 +382,12 @@ namespace Wiki_Prototype
 
         }
 
-
+        //8.4 Write the code for a Bubble Sort method to sort the 2D array by Name ascending
         private void Sort()
         {
-            try {
-                
+            try
+            {
+
 
 
                 for (int i = 0; i < item; i++)
@@ -389,7 +399,6 @@ namespace Wiki_Prototype
                         if (char.ToLower(wikiArray[j - 1, name][0]) > char.ToLower(wikiArray[j, name][0]))
                         {
                             bubbleSwap(j);
-
                         }
                     }
                 }
@@ -402,8 +411,9 @@ namespace Wiki_Prototype
 
 
             Display();
-            }
+        }
 
+        //8.4 Ensure you use a separate swap method that passes (by reference) the array element to be swapped (do not use any built-in array methods)
         private void bubbleSwap(int j)
         {
             string[] temp = new string[4];
@@ -449,6 +459,7 @@ namespace Wiki_Prototype
 
         #endregion
 
+        //8.3	Create a CLEAR method to clear the four text boxes so a new definition can be added
         #region Mouseclick
         private void textBoxName_DoubleClick(object sender, EventArgs e)
         {
